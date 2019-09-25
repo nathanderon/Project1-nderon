@@ -109,3 +109,16 @@ output$flag <- renderPlotly({
 ```{r context="render"}
 plotlyOutput("flag")
 ```
+
+
+### Data and Summary
+
+```{r context="server"}
+output$DT <- renderDataTable({
+  blotter_subset()
+})
+```
+
+```{r context="render"}
+dataTableOutput(outputId = "DT")
+```
