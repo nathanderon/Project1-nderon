@@ -13,15 +13,47 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 library(DT)
+neighborhoods <- sort(unique(blotter_data$INCIDENTNEIGHBORHOOD))
 ```
 
 Inputs {.sidebar}
 -----------------------------------------------------------------------
 
-### Chart A
-
 ```{r}
+#City council district input
+ checkboxGroupInput(inputId = "selected_districts",
+                    label = "Select Council District(s)",
+                    choices = c(1:9),
+                    selected = c(1:9)
+)
 
+#date range input
+dateRangeInput(inputId = "date_range",
+               label = "Date Range: yyyy-mm-dd",
+               start = "2009-01-01",
+               end = "2019-01-01",
+               startview = "year")
+
+#Neighborhood selection, adjusted from https://stackoverflow.com/questions/24916115/select-deselect-all-button-for-shiny-variable-selection
+radioButtons(
+  inputId="radio",
+  label="Neighborhood Selection Type:",
+  choices=list(
+    "All",
+    "Manual Select"
+  ),
+  selected="All")
+
+#If manual selection used above, give neighborhood options
+conditionalPanel(
+  condition = "input.radio != 'All'",
+  checkboxGroupInput(
+    'neighborhoods', 
+    'Neighborhoods to Show:',
+    choices= neighborhoods, 
+    selected = c("Central Oakland", "Shadyside", "Squirrel Hill North", "Squirrel Hill South")
+  )
+)
 ```
 
 Column {.tabset}
