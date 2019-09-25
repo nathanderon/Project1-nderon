@@ -144,7 +144,7 @@ valueBoxOutput(outputId = "dist")
 ```{r context="server"}
 output$neigh <- renderValueBox({
   neigh <- sort(blotter_subset()$INCIDENTNEIGHBORHOOD,decreasing=TRUE)[1]
-  valueBox(neigh)
+  valueBox(neigh, color = "orange")
 })
 ```
 
