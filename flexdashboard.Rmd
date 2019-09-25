@@ -92,3 +92,19 @@ output$date <- renderPlotly({
 ```{r context="render"}
 plotlyOutput("date")
 ```
+
+
+### Time of Year
+
+```{r context="server"}
+output$flag <- renderPlotly({
+  (ggplot(blotter_subset(), aes(x = CLEAREDFLAG, y = type, color = type)) +
+      geom_count() +
+      labs(x = "UCR Code Types", y = "Time of Day (Ignore data date)", Title = "UCR Code Type Distribution by Time of Day")) %>%
+  ggplotly()
+})
+```
+
+```{r context="render"}
+plotlyOutput("flag")
+```
