@@ -1,5 +1,5 @@
 ---
-title: "flexdashboard + shiny_prerendered"
+title: "Pittsburgh Police Blotter Data Overview"
 output: 
   flexdashboard::flex_dashboard:
     orientation: row
