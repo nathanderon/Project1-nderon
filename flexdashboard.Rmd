@@ -13,6 +13,7 @@ library(shiny)
 library(ggplot2)
 library(dplyr)
 library(DT)
+library(plotly)
 blotter_data <- read.csv("Blotter_Data_Archive.csv", header = T) %>% sample_frac(., 0.2)
 blotter_data$INCIDENTTIME <- strptime(x = as.character(blotter_data$INCIDENTTIME),
                                       format = "%Y-%m-%dT%H:%M:%S") #From factor to datetime
@@ -53,7 +54,7 @@ checkboxGroupInput(inputId = "selected_hierarchy",
 Column {.tabset}
 -----------------------------------------------------------------------
 
-### Time of Year
+### Time of Day
 
 ```{r context="server"}
 blotter_subset <- reactive({
@@ -63,21 +64,31 @@ blotter_subset <- reactive({
            type %in% input$selected_hierarchy)
 })
 
-output$time <- renderPlot({
-  ggplot(blotter_subset(), aes(x = blotter_subset()$time)) + geom_freqpoly(stat = "bin", binwidth = 3600) +
-    scale_x_datetime(date_label = "%H:%M")
-    labs(x = "Time of Day", y = "Count", title = "Count of Police Blotter Incidents by Time of Day")
+output$time <- renderPlotly({
+  (ggplot(blotter_subset(), aes(x = blotter_subset()$time)) + geom_freqpoly(stat = "bin", binwidth = 3600) +
+    scale_x_datetime(date_label = "%H:%M") +
+    labs(x = "Time of Day", y = "Count", title = "Count of Police Blotter Incidents by Time of Day")) %>%
+  ggplotly()
 })
 ```
 
 ```{r context="render"}
-plotOutput("time")
+plotlyOutput("time")
 ```
 
 
-### Chart C
+### Time of Year
 
-```{r}
-
+```{r context="server"}
+output$date <- renderPlotly({
+  (ggplot(blotter_subset(), aes(x = blotter_subset()$date, fill = type)) + 
+    geom_histogram(stat = "bin", bins = 12) +
+    scale_x_datetime(date_label = "%m") +
+    labs(x = "Time of Year", y = "Count", title = "Count of Police Blotter Incidents by Time of Year and Type")) %>%
+  ggplotly()
+})
 ```
 
+```{r context="render"}
+plotlyOutput("date")
+```
