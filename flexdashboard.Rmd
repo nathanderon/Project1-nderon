@@ -2,7 +2,7 @@
 title: "flexdashboard + shiny_prerendered"
 output: 
   flexdashboard::flex_dashboard:
-    orientation: columns
+    orientation: row
     source_code: embed
 runtime: shiny
 ---
@@ -51,7 +51,7 @@ checkboxGroupInput(inputId = "selected_hierarchy",
                    selected = levels(blotter_data$type))
 ```
 
-Column {.tabset}
+Outputs {.tabset}
 -----------------------------------------------------------------------
 
 ### Time of Day
@@ -110,8 +110,52 @@ output$flag <- renderPlotly({
 plotlyOutput("flag")
 ```
 
+Row 
+-----------------------------------------------------------------------
 
-### Data and Summary
+### Cleared Rate
+
+```{r context="server"}
+output$clear <- renderGauge({
+  rate <- ((nrow(filter(blotter_subset(), CLEAREDFLAG == "Y"))/nrow(blotter_subset())) * 100) %>% signif(2)
+  gauge(rate, min = 0, max = 100, symbol = '%')
+})
+```
+
+```{r context="render"}
+gaugeOutput(outputId = "clear")
+```
+
+### Most Common Incident
+
+```{r context="server"}
+output$dist <- renderValueBox({
+  dist <- sort(blotter_subset()$INCIDENTHIERARCHYDESC,decreasing=TRUE)[1]
+  valueBox(dist)
+})
+```
+
+```{r context="render"}
+valueBoxOutput(outputId = "dist")
+```
+
+### Highest-Incident Neighborhood
+
+```{r context="server"}
+output$neigh <- renderValueBox({
+  neigh <- sort(blotter_subset()$INCIDENTNEIGHBORHOOD,decreasing=TRUE)[1]
+  valueBox(neigh)
+})
+```
+
+```{r context="render"}
+valueBoxOutput(outputId = "neigh")
+```
+
+Row 
+-----------------------------------------------------------------------
+
+### Data
 
 ```{r context="server"}
 output$DT <- renderDataTable({
