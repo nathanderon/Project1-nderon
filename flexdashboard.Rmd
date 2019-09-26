@@ -110,6 +110,18 @@ output$flag <- renderPlotly({
 plotlyOutput("flag")
 ```
 
+### Data
+
+```{r context="server"}
+output$DT <- renderDataTable({
+  DT::datatable(blotter_subset(), options = list(scrollY = "300px", scrollX = T))
+})
+```
+
+```{r context="render"}
+dataTableOutput(outputId = "DT")
+```
+
 Row 
 -----------------------------------------------------------------------
 
@@ -160,19 +172,4 @@ output$neigh <- renderValueBox({
 
 ```{r context="render"}
 valueBoxOutput(outputId = "neigh")
-```
-
-Row 
------------------------------------------------------------------------
-
-### Data
-
-```{r context="server"}
-output$DT <- renderDataTable({
-  blotter_subset()
-})
-```
-
-```{r context="render"}
-dataTableOutput(outputId = "DT")
 ```
