@@ -130,7 +130,12 @@ gaugeOutput(outputId = "clear")
 
 ```{r context="server"}
 output$dist <- renderValueBox({
-  dist <- sort(blotter_subset()$INCIDENTHIERARCHYDESC,decreasing=TRUE)[1]
+  dist <- blotter_subset() %>% 
+  group_by(INCIDENTHIERARCHYDESC) %>%
+  summarize(n_rows = length(INCIDENTHIERARCHYDESC)) %>%
+  na.omit() %>%
+  filter(n_rows == max(n_rows)) %>%
+  select(INCIDENTHIERARCHYDESC)
   valueBox(dist)
 })
 ```
@@ -143,7 +148,12 @@ valueBoxOutput(outputId = "dist")
 
 ```{r context="server"}
 output$neigh <- renderValueBox({
-  neigh <- sort(blotter_subset()$INCIDENTNEIGHBORHOOD,decreasing=TRUE)[1]
+  neigh <- blotter_subset() %>% 
+  group_by(INCIDENTNEIGHBORHOOD) %>%
+  summarize(n_rows = length(INCIDENTNEIGHBORHOOD)) %>%
+  na.omit() %>%
+  filter(n_rows == max(n_rows)) %>%
+  select(INCIDENTNEIGHBORHOOD)
   valueBox(neigh, color = "orange")
 })
 ```
