@@ -57,14 +57,14 @@ Outputs {.tabset}
 ### Time of Day
 
 ```{r context="server"}
-blotter_subset <- reactive({
+blotter_subset <- reactive({    #Reactive subset based on inputs
   req(input$selected_districts, input$date_range, input$selected_hierarchy)
   filter(blotter_data, COUNCIL_DISTRICT %in% input$selected_districts & 
            between(INCIDENTTIME, as.POSIXct(input$date_range[[1]]), as.POSIXct(input$date_range[[2]])) &
            type %in% input$selected_hierarchy)
 })
 
-output$time <- renderPlotly({
+output$time <- renderPlotly({   #Count of incidents by time of day plot
   (ggplot(blotter_subset(), aes(x = blotter_subset()$time)) + geom_freqpoly(stat = "bin", binwidth = 3600) +
     geom_freqpoly(stat = "bin", binwidth = 3600, aes(color = type)) +
     scale_x_datetime(date_label = "%H:%M") +
@@ -81,7 +81,7 @@ plotlyOutput("time")
 ### Time of Year
 
 ```{r context="server"}
-output$date <- renderPlotly({
+output$date <- renderPlotly({   #Count of incidents by time of year plot
   (ggplot(blotter_subset(), aes(x = blotter_subset()$date, fill = type)) + 
     geom_histogram(stat = "bin", bins = 12) +
     scale_x_datetime(date_label = "%m") +
@@ -98,7 +98,7 @@ plotlyOutput("date")
 ### Cleared Status
 
 ```{r context="server"}
-output$flag <- renderPlotly({
+output$flag <- renderPlotly({   #Count of incidents by cleared status and hierarchy type
   (ggplot(blotter_subset(), aes(x = type, fill = CLEAREDFLAG)) +
       geom_bar() +
       labs(x = "Crime Hierarchy Type", y = "Count", Title = "Cleared Status by Hierarchy Type")) %>%
@@ -113,7 +113,7 @@ plotlyOutput("flag")
 ### Data
 
 ```{r context="server"}
-output$DT <- renderDataTable({
+output$DT <- renderDataTable({    #Datatable code
   DT::datatable(blotter_subset(), options = list(scrollY = "300px", scrollX = T))
 })
 ```
@@ -128,7 +128,7 @@ Row
 ### Cleared Rate
 
 ```{r context="server"}
-output$clear <- renderGauge({
+output$clear <- renderGauge({   #Cleared gauge
   rate <- ((nrow(filter(blotter_subset(), CLEAREDFLAG == "Y"))/nrow(blotter_subset())) * 100) %>% signif(2)
   gauge(rate, min = 0, max = 100, symbol = '%')
 })
@@ -141,7 +141,7 @@ gaugeOutput(outputId = "clear")
 ### Most Common Incident
 
 ```{r context="server"}
-output$dist <- renderValueBox({
+output$dist <- renderValueBox({   #Most common incident type value box
   dist <- blotter_subset() %>% 
   group_by(INCIDENTHIERARCHYDESC) %>%
   summarize(n_rows = length(INCIDENTHIERARCHYDESC)) %>%
@@ -159,7 +159,7 @@ valueBoxOutput(outputId = "dist")
 ### Highest-Incident Neighborhood
 
 ```{r context="server"}
-output$neigh <- renderValueBox({
+output$neigh <- renderValueBox({    #Neighborhood with most incidents value box
   neigh <- blotter_subset() %>% 
   group_by(INCIDENTNEIGHBORHOOD) %>%
   summarize(n_rows = length(INCIDENTNEIGHBORHOOD)) %>%
